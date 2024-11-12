@@ -4,13 +4,13 @@ import { getItems, removeAllItems, storeItems } from "./utils/localStorage";
 
 export type User = {
   name: string;
-  age: number | null;
+  age: number | unknown;
 };
 
 function App() {
   const [userData, setUserData] = useState<User[]>(getItems("users"));
 
-  const [newUser, setNewUser] = useState<User>({ name: "", age: null });
+  const [newUser, setNewUser] = useState<User>({ name: "", age: undefined });
 
   useEffect(() => {
     storeItems("users", userData);
@@ -20,7 +20,7 @@ function App() {
     event.preventDefault();
     if (!newUser || newUser?.age as number <= 0) return;
     setUserData([...userData, newUser!]);
-    setNewUser({ name: "", age: null });
+    setNewUser({ name: "", age: ""});
   }
 
   return (
