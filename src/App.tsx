@@ -4,13 +4,13 @@ import { getItems, removeAllItems, storeItems } from "./utils/localStorage";
 
 export type User = {
   name: string;
-  age: number | unknown;
+  age: number;
 };
 
 function App() {
   const [userData, setUserData] = useState<User[]>(getItems("users"));
 
-  const [newUser, setNewUser] = useState<User>({ name: "", age: undefined });
+  const [newUser, setNewUser] = useState<User>({ name: "", age: "" });
 
   useEffect(() => {
     storeItems("users", userData);
@@ -34,7 +34,7 @@ function App() {
         </label>
         <label htmlFor="age">
           Age:
-          <input type="number" min={0} name="age" value={newUser.age as number } onChange={(event) => setNewUser({ ...newUser, age: Number(event.target.value) })} />
+          <input type="number" min={0} name="age" value={newUser.age } onChange={(event) => setNewUser({ ...newUser, age: Number(event.target.value) })} />
         </label>
 
         <input type="submit" value={"Add User"} className="bg-green-400 rounded-xl w-9/12 mx-auto active:bg-green-700" />
