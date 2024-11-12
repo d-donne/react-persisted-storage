@@ -1,35 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { FormEvent, useEffect, useState } from "react";
+import "./App.css";
+import { getItems, removeAllItems, storeItems } from "./utils/localStorage";
+
+export type User = {
+  name: string;
+  age: number;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [userData, setUserData] = useState<User[]>(getItems("users"));
+
+  const [newUser, setNewUser] = useState<User>({ name: "", age: 0 });
+
+  useEffect(() => {
+    storeItems("users", userData);
+  }, [userData]);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    if (!newUser || newUser?.age <= 0) return;
+    setUserData([...userData, newUser!]);
+    setNewUser({ name: "", age: 0 });
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1 className="font-bold text-4xl underline mb-10">Users</h1>
+
+      <form onSubmit={handleSubmit} className="flex flex-col w-[50%] gap-5 mx-auto">
+        <label htmlFor="name">
+          Name:
+          <input type="text" name="name" value={newUser.name} onChange={(event) => setNewUser({ ...newUser, name: event.target.value })} />
+        </label>
+        <label htmlFor="age">
+          Age:
+          <input type="number" min={0} name="age" value={newUser.age ?? 0} onChange={(event) => setNewUser({ ...newUser, age: Number(event.target.value) })} />
+        </label>
+
+        <input type="submit" value={"Add User"} className="bg-green-400 rounded-xl w-9/12 mx-auto active:bg-green-700" />
+        
+        <button onClick={() => { removeAllItems("users");  setUserData([])}} className="bg-red-400 rounded-xl w-9/12 mx-auto active:bg-red-700">Delete All Users</button>
+      </form>
+
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Age</th>
+          </tr>
+        </thead>
+        <tbody>
+          {userData.map((user, index) => (
+            <tr key={index}>
+              <td>{user.name}</td>
+              <td>{user.age}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
