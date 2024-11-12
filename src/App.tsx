@@ -4,13 +4,13 @@ import { getItems, removeAllItems, storeItems } from "./utils/localStorage";
 
 export type User = {
   name: string;
-  age: number;
+  age: number | null;
 };
 
 function App() {
   const [userData, setUserData] = useState<User[]>(getItems("users"));
 
-  const [newUser, setNewUser] = useState<User>({ name: "", age: 0 });
+  const [newUser, setNewUser] = useState<User>({ name: "", age: null });
 
   useEffect(() => {
     storeItems("users", userData);
@@ -18,9 +18,9 @@ function App() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    if (!newUser || newUser?.age <= 0) return;
+    if (!newUser || newUser?.age as number <= 0) return;
     setUserData([...userData, newUser!]);
-    setNewUser({ name: "", age: 0 });
+    setNewUser({ name: "", age: null });
   }
 
   return (
@@ -34,7 +34,7 @@ function App() {
         </label>
         <label htmlFor="age">
           Age:
-          <input type="number" min={0} name="age" value={newUser.age ?? 0} onChange={(event) => setNewUser({ ...newUser, age: Number(event.target.value) })} />
+          <input type="number" min={0} name="age" value={newUser.age as number } onChange={(event) => setNewUser({ ...newUser, age: Number(event.target.value) })} />
         </label>
 
         <input type="submit" value={"Add User"} className="bg-green-400 rounded-xl w-9/12 mx-auto active:bg-green-700" />
